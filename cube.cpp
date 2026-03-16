@@ -59,9 +59,17 @@ int main(){
 // stb
 	int width, height ,channels;
 	unsigned char* data = stbi_load("rajiv.png", &width,  &height, &channels, 0);
+	if(!data){
+					std::cerr << "Failed to load rajiv.png" << std::endl;
+					return -1;
+	}
   glewExperimental = GL_TRUE;
   glfwMakeContextCurrent(window);
-  glewInit();
+  if(glewInit() != GLEW_OK){
+		std::cerr << "GLEW init failed" << std::endl;
+		return -1;
+	}
+
     glEnable(GL_DEPTH_TEST);
   glViewport(0, 0, 800, 800);
 	//Texture
@@ -95,8 +103,8 @@ int main(){
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
-
 	glBindVertexArray(0);
+
 	// SHADER
 	const char* vertexSource = R"(
 	#version 330 core
@@ -158,6 +166,7 @@ int main(){
 		
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		std::cout << "Drawing frame..." << std::endl;
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		glfwPollEvents();
 		glfwSwapBuffers(window);
